@@ -11,6 +11,101 @@ uint16_t _event_bytes_count = 0;
 uint16_t _tempo_change_count = 0;
 uint32_t _last_min_ticks = 0;
 uint16_t _event_count = 0; //looking for about 8780
+uint16_t _tick_index = 0;
+uint8_t _temp_mem[131071];
+uint32_t * _temp_ticks = _temp_mem;
+
+
+
+
+
+
+
+
+
+
+
+// Merge two subarrays L and M into arr
+void merge(uint32_t arr[], uint32_t p, uint32_t q, uint32_t r) {
+
+  // Create L ← A[p..q] and M ← A[q+1..r]
+  uint32_t n1 = q - p + 1;
+  uint32_t n2 = r - q;
+
+  uint32_t L[n1], M[n2];
+
+  for (uint32_t i = 0; i < n1; i++)
+    L[i] = arr[p + i];
+  for (uint32_t j = 0; j < n2; j++)
+    M[j] = arr[q + 1 + j];
+
+  // Maintain current index of sub-arrays and main array
+  uint32_t i, j, k;
+  i = 0;
+  j = 0;
+  k = p;
+
+  // Until we reach either end of either L or M, pick larger among
+  // elements L and M and place them in the correct position at A[p..r]
+  while (i < n1 && j < n2) {
+    if (L[i] <= M[j]) {
+      arr[k] = L[i];
+      i++;
+    } else {
+      arr[k] = M[j];
+      j++;
+    }
+    k++;
+  }
+
+  // When we run out of elements in either L or M,
+  // pick up the remaining elements and put in A[p..r]
+  while (i < n1) {
+    arr[k] = L[i];
+    i++;
+    k++;
+  }
+
+  while (j < n2) {
+    arr[k] = M[j];
+    j++;
+    k++;
+  }
+}
+
+// Divide the array into two subarrays, sort them and merge them
+void mergeSort(uint32_t arr[], uint32_t l, uint32_t r) {
+  if (l < r) {
+
+    // m is the point where the array is divided into two subarrays
+    uint32_t m = l + (r - l) / 2;
+
+    mergeSort(arr, l, m);
+    mergeSort(arr, m + 1, r);
+
+    // Merge the sorted subarrays
+    merge(arr, l, m, r);
+  }
+}
+
+
+void dedup_ticks()
+{
+    uint32_t j = 0;
+    for (uint32_t i = 1; i < _tick_index; i++)
+    {
+        if (_temp_ticks[i] != _temp_ticks[j] )
+        {
+            j++;
+            _temp_ticks[j] = _temp_ticks[i];
+        }
+        
+    }
+    _tick_index = j + 1;
+}
+
+
+
 
 typedef struct
 {
@@ -68,6 +163,24 @@ void sort_indexes_by_ticks(uint8_t track_count)
     }
 }
 
+void sort_ticks()
+{
+    uint32_t temp;
+
+    for (uint16_t i = 0; i < _tick_index; i++)
+    {
+        for (uint16_t j = 0; j < _tick_index - i - 1; j++)
+        {
+            if (_temp_ticks[j] > _temp_ticks[j + 1])
+            {
+                temp = _temp_ticks[j];
+                _temp_ticks[j] = _temp_ticks[j+1];
+                _temp_ticks[j+1] = temp;
+            }
+        }
+    }
+}
+
 void update_unique_tick_count(uint8_t current_index, uint8_t track_count)
 {
     for (uint8_t i = 0; i < track_count; i++)
@@ -103,7 +216,28 @@ bool tracks_left_to_process(midi_info * midi)
     return false;
 }
 
-midi_result_t process_track(midi_info * midi, indexed_delta * idx_d)
+uint32_t get_next_biggest_ticks(midi_info * midi)
+{
+    uint32_t ticks = 0xFFFFFFFF;
+
+    for (uint8_t i = 0; i < midi->track_cnt; i++)
+    {
+        if (_deltas[i].ticks < ticks && _deltas[i].ticks > 0 && !midi->tracks[i].eot_reached)
+        {
+            ticks = _deltas[i].ticks;
+        }
+    }
+
+    if (ticks == 0xFFFFFFFF)
+    {
+        // printf("*retunr 0*\n");
+        return 0;
+    }
+
+    return ticks;
+}
+
+midi_result_t process_track_counts(midi_info * midi, indexed_delta * idx_d)
 {
     uint8_t data[255];
     uint8_t meta_channel = 0;
@@ -115,7 +249,8 @@ midi_result_t process_track(midi_info * midi, indexed_delta * idx_d)
     track_info * track = &(midi->tracks[idx_d->index]);
 
 
-        // printf("Processing track %d. Last elapsed: %u, Size: %u, Addr: 0x%08x\n", idx_d->index, idx_d->ticks, track->size, track->address);
+    // printf("Processing track %d. Last elapsed: %u, Size: %u, Addr: 0x%08x\n", idx_d->index, idx_d->ticks, track->size, track->address);
+    // printf("\tProcessing till %u\n", next_ticks);
 
     if (f_lseek(midi->file, track->address) != OK) return READ_ERROR;
 
@@ -123,26 +258,46 @@ midi_result_t process_track(midi_info * midi, indexed_delta * idx_d)
     //keep processing events until the delta is non-zero
     while(1)
     {
-        if (track->read_delta)
-        {
+        // if (track->read_delta)
+        // {
             if (get_VLQ(midi->file, &( track->address), &(track->delta)) != OK) return READ_ERROR;  
-        }
+        // }
 
-        if (track->delta > 0 && track->read_delta)
-        {
-            idx_d->ticks += track->delta;
-            // printf("Setting track %d elapsed to: %u\n", idx_d->index, idx_d->ticks);
-            //Make sure we skip reading the delta next time because we already have it
-            track->read_delta = false;
-            //We want to replay the status on each delta change
+            //Going to use this as a flag to indicate a delta change
+            track->read_delta = false; 
+            if (track->delta > 0)
+            {
+                track->read_delta = true;
+                idx_d->ticks += track->delta;   
+                _temp_ticks[_tick_index++] = idx_d->ticks;
+            }
+
+        // if (track->delta > 0 && track->read_delta)
+        // {
+        //     idx_d->ticks += track->delta;
+        //     // printf("Setting track %d elapsed to: %u\n", idx_d->index, idx_d->ticks);
+        //     //Make sure we skip reading the delta next time because we already have it
            
-            return OK;
-        }
+        //     if (idx_d->ticks != next_ticks)
+        //     {
+        //          _unique_ticks_count++;
+        //     }
+
+        //     if (idx_d->ticks > next_ticks)
+        //     {
+        //         track->read_delta = false;
+        //         //We want to replay the status on each delta change
+        //         // printf("Exiting track processing\n");
+        //         return OK;
+        //     }
+
+           
+        // }
         
         
 
         if (read_status_data(midi->file, track, &new_status) != OK) return READ_ERROR;  
-        // printf("Track: %d, processing status: 0x%02x. Event %u\n", idx_d->index, track->status, _event_count);
+        // printf("Track: %d, processing status: 0x%02x. Event %u. Ticks: %u\n", idx_d->index, track->status, _event_count, idx_d->ticks);
         if ((track->status & 0xF0) == 0xF0)
         {
             
@@ -271,15 +426,17 @@ midi_result_t process_track(midi_info * midi, indexed_delta * idx_d)
             }
         }  
 
-        //Waiting till the end here to reset this flag because it is
-        //being used to check for a delta change
-        track->read_delta = true;      
+
+           
     }
 }
 
 
 midi_result_t process_all_tracks(midi_info * midi)
 {
+
+    
+    uint32_t next_biggest_ticks = 0;
     _unique_ticks_count = 0; 
     _event_bytes_count = 0;
     _tempo_change_count = 0;
@@ -288,16 +445,18 @@ midi_result_t process_all_tracks(midi_info * midi)
     destroy_deltas();
     create_deltas(midi->track_cnt);
     //First Pass: Get counts
-    while(tracks_left_to_process(midi))
+    // while(tracks_left_to_process(midi))
     {
         // printf("Starting track pass. Event Count: %u\n", _event_count);
 // sleep_ms(100);
         for (uint8_t i = 0; i < midi->track_cnt; i++)
         {
+            // next_biggest_ticks = get_next_biggest_ticks(midi);
+            // printf("Next biggest ticks: %u\n", next_biggest_ticks);
             //Skip to the next if the track is at EoT or it's
             //current tick count is not less/equal to the last
-            if (midi->tracks[_deltas[i].index].eot_reached
-                || _deltas[i].ticks > _last_min_ticks)
+            if (midi->tracks[_deltas[i].index].eot_reached)
+                // || _deltas[i].ticks > _last_min_ticks)
             {
                 // if (midi->tracks[_deltas[i].index].eot_reached)
                 // {
@@ -311,31 +470,38 @@ midi_result_t process_all_tracks(midi_info * midi)
             }
 
             
-            process_track(midi, _deltas + i);
+            process_track_counts(midi, _deltas + i);
 
             //The returned value may still be less than the next
             //but it should always be greater than the last
             //so it can always be updated
-            _last_min_ticks = _deltas[i].ticks;
+            // _last_min_ticks = _deltas[i].ticks;
 
             //We want to update the count if the 
-            if (!(midi->tracks[_deltas[i].index].eot_reached))
-            {
-                update_unique_tick_count(i, midi->track_cnt);
-            }
+            // if (!(midi->tracks[_deltas[i].index].eot_reached))
+            // {
+            //     update_unique_tick_count(i, midi->track_cnt);
+            // }
 
         }
 
-        sort_indexes_by_ticks(midi->track_cnt);
+        // printf("---Sort---\n");
+        // sort_indexes_by_ticks(midi->track_cnt);
     }
     
     //Allocate arrays
 
     //Second pass: load data
 
-    printf("Event Bytes: %u, Unique Tick Count: %u, Tempo Changes: %u, Ticks: %u\n", _event_bytes_count, _unique_ticks_count, _tempo_change_count, _last_min_ticks);
-
-    midi->event_bytes = (uint8_t *) malloc(_event_bytes_count);
+    
+    
+    mergeSort(_temp_ticks, 0, _tick_index - 1);
+    dedup_ticks();
+    printf("Event Bytes: %u, Unique Tick Count: %u, Tempo Changes: %u, Ticks: %u\n", _event_bytes_count, _unique_ticks_count, _tempo_change_count, _tick_index);
+    for (uint32_t i = 0; i < _tick_index; i++)
+    {
+        printf("%u, ", _temp_ticks[i]);
+    }
 
     return OK;
 }
