@@ -125,7 +125,7 @@ midi_result_t load_word(FIL * fptr, uint32_t offset, uint16_t * value);
 midi_result_t midi_get_file_info(FIL * fptr, const TCHAR *path, midi_info * midi);
 midi_result_t midi_mount_root(DIR * root);
 midi_result_t midi_open_sd();
-
+midi_result_t midi_move_pointer(FIL * fptr, uint32_t length);
 
 // midi_result_t midi_test();
 

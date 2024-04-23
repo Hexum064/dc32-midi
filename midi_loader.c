@@ -17,6 +17,15 @@ uint32_t * _temp_ticks = _temp_mem;
 
 
 
+typedef struct
+{
+    uint32_t ticks;
+    uint8_t index;
+} indexed_delta;
+
+
+//indexed_delta * _deltas = 0;
+indexed_delta _deltas[8];
 
 
 
@@ -24,9 +33,8 @@ uint32_t * _temp_ticks = _temp_mem;
 
 
 
-
-// Merge two subarrays L and M into arr
-void merge(uint32_t arr[], uint32_t p, uint32_t q, uint32_t r) {
+// Merge two subarrays L and M into _temp_ticks
+void merge(uint32_t p, uint32_t q, uint32_t r) {
 
   // Create L ← A[p..q] and M ← A[q+1..r]
   uint32_t n1 = q - p + 1;
@@ -35,9 +43,9 @@ void merge(uint32_t arr[], uint32_t p, uint32_t q, uint32_t r) {
   uint32_t L[n1], M[n2];
 
   for (uint32_t i = 0; i < n1; i++)
-    L[i] = arr[p + i];
+    L[i] = _temp_ticks[p + i];
   for (uint32_t j = 0; j < n2; j++)
-    M[j] = arr[q + 1 + j];
+    M[j] = _temp_ticks[q + 1 + j];
 
   // Maintain current index of sub-arrays and main array
   uint32_t i, j, k;
@@ -49,10 +57,10 @@ void merge(uint32_t arr[], uint32_t p, uint32_t q, uint32_t r) {
   // elements L and M and place them in the correct position at A[p..r]
   while (i < n1 && j < n2) {
     if (L[i] <= M[j]) {
-      arr[k] = L[i];
+      _temp_ticks[k] = L[i];
       i++;
     } else {
-      arr[k] = M[j];
+      _temp_ticks[k] = M[j];
       j++;
     }
     k++;
@@ -61,30 +69,30 @@ void merge(uint32_t arr[], uint32_t p, uint32_t q, uint32_t r) {
   // When we run out of elements in either L or M,
   // pick up the remaining elements and put in A[p..r]
   while (i < n1) {
-    arr[k] = L[i];
+    _temp_ticks[k] = L[i];
     i++;
     k++;
   }
 
   while (j < n2) {
-    arr[k] = M[j];
+    _temp_ticks[k] = M[j];
     j++;
     k++;
   }
 }
 
 // Divide the array into two subarrays, sort them and merge them
-void mergeSort(uint32_t arr[], uint32_t l, uint32_t r) {
+void ticks_merge_sort(uint32_t l, uint32_t r) {
   if (l < r) {
 
     // m is the point where the array is divided into two subarrays
     uint32_t m = l + (r - l) / 2;
 
-    mergeSort(arr, l, m);
-    mergeSort(arr, m + 1, r);
+    ticks_merge_sort(l, m);
+    ticks_merge_sort(m + 1, r);
 
     // Merge the sorted subarrays
-    merge(arr, l, m, r);
+    merge(l, m, r);
   }
 }
 
@@ -107,15 +115,7 @@ void dedup_ticks()
 
 
 
-typedef struct
-{
-    uint32_t ticks;
-    uint8_t index;
-} indexed_delta;
 
-
-//indexed_delta * _deltas = 0;
-indexed_delta _deltas[8];
 
 
 void clear_deltas(uint8_t track_count)
@@ -265,6 +265,7 @@ midi_result_t process_track_counts(midi_info * midi, indexed_delta * idx_d)
 
             //Going to use this as a flag to indicate a delta change
             track->read_delta = false; 
+
             if (track->delta > 0)
             {
                 track->read_delta = true;
@@ -318,7 +319,8 @@ midi_result_t process_track_counts(midi_info * midi, indexed_delta * idx_d)
                     break;
                 case SONG_SEL:
                     //Ignored but will need to skip the data
-                    if (read_current_data(midi->file, &(track->address), data, 1) != OK) return READ_ERROR; 
+                    if (midi_move_pointer(midi->file, 1) != OK) return READ_ERROR;
+                    // if (read_current_data(midi->file, &(track->address), data, 1) != OK) return READ_ERROR; 
                     break;
                 case META_EVENT:
                     
@@ -328,7 +330,8 @@ midi_result_t process_track_counts(midi_info * midi, indexed_delta * idx_d)
                     meta_event = data[0];
                     len = data[1];
                     // printf("\tTrk %d, meta event 0x%02x, len: %d\n", index, meta_event, len);
-                    if (read_current_data(midi->file, &(track->address), data, len) != OK) return READ_ERROR;  
+                    // if (read_current_data(midi->file, &(track->address), data, len) != OK) return READ_ERROR;  
+                    if (midi_move_pointer(midi->file, len) != OK) return READ_ERROR;
                     //first byte should be the meta event
                     switch (meta_event)
                     {
@@ -338,7 +341,7 @@ midi_result_t process_track_counts(midi_info * midi, indexed_delta * idx_d)
                         case TRACK_NAME:
                         case INSTR_NAME:
                         case LYRIC:
-                            printf("Trk: %d, %*s\n", idx_d->index, len, data);
+                            // printf("Trk: %d, %*s\n", idx_d->index, len, data);
                             break;
                         case SEQ_NUM:                        
                         case MARKER:
@@ -359,15 +362,15 @@ midi_result_t process_track_counts(midi_info * midi, indexed_delta * idx_d)
                             //Nothing to send but we need to update the timing
                             //function works on 4 bytes so we need to shit everything
                             //since tempo is only 3 bytes
-                            data[3] = data[2];
-                            data[2] = data[1];
-                            data[1] = data[0];
-                            data[0] = 0;
-                            tempo = big_endian_to_int(data);
-#ifndef DEBUG
-                            midi->us_per_tick = tempo/midi->time_div;
-#endif
-                            printf("Trk: %d, setting tempo: %u, time div: %u, us/tick: %u\n", idx_d->index, tempo, midi->time_div, midi->us_per_tick);
+//                             data[3] = data[2];
+//                             data[2] = data[1];
+//                             data[1] = data[0];
+//                             data[0] = 0;
+//                             tempo = big_endian_to_int(data);
+// #ifndef DEBUG
+//                             midi->us_per_tick = tempo/midi->time_div;
+// #endif
+//                             printf("Trk: %d, setting tempo: %u, time div: %u, us/tick: %u\n", idx_d->index, tempo, midi->time_div, midi->us_per_tick);
 
                             _tempo_change_count++;
                             
@@ -400,7 +403,8 @@ midi_result_t process_track_counts(midi_info * midi, indexed_delta * idx_d)
                 case POLY_KEP_PRESS:
                 case PITCH_WHEEL:
                 case CTRL_CHANGE:
-                    if (read_current_data(midi->file, &( track->address), data, 2) != OK) return READ_ERROR; 
+                    // if (read_current_data(midi->file, &( track->address), data, 2) != OK) return READ_ERROR; 
+                    if (midi_move_pointer(midi->file, 2) != OK) return READ_ERROR;
                     _event_bytes_count += 2;
                     if (new_status || !track->read_delta)
                     {
@@ -412,7 +416,8 @@ midi_result_t process_track_counts(midi_info * midi, indexed_delta * idx_d)
                 //(1 byte version)                
                 case PROG_CHANGE:                            
                 case CHAN_PRESS:
-                    if (read_current_data(midi->file, &( track->address), data, 1) != OK) return READ_ERROR; 
+                    // if (read_current_data(midi->file, &( track->address), data, 1) != OK) return READ_ERROR; 
+                    if (midi_move_pointer(midi->file, 1) != OK) return READ_ERROR;
                     _event_bytes_count += 1;
                     if (new_status || !track->read_delta)
                     {
@@ -442,7 +447,7 @@ midi_result_t process_all_tracks(midi_info * midi)
     _tempo_change_count = 0;
     _last_min_ticks = 0;
     _event_count = 0;
-    destroy_deltas();
+    // destroy_deltas();
     create_deltas(midi->track_cnt);
     //First Pass: Get counts
     // while(tracks_left_to_process(midi))
@@ -455,9 +460,9 @@ midi_result_t process_all_tracks(midi_info * midi)
             // printf("Next biggest ticks: %u\n", next_biggest_ticks);
             //Skip to the next if the track is at EoT or it's
             //current tick count is not less/equal to the last
-            if (midi->tracks[_deltas[i].index].eot_reached)
+            // if (midi->tracks[_deltas[i].index].eot_reached)
                 // || _deltas[i].ticks > _last_min_ticks)
-            {
+            // {
                 // if (midi->tracks[_deltas[i].index].eot_reached)
                 // {
                 //     printf("Skipping track %d. EoT\n", _deltas[i].index);    
@@ -466,8 +471,8 @@ midi_result_t process_all_tracks(midi_info * midi)
                 // {
                 //     printf("Skipping track %d. Ticks: %u, Last min ticks: %u\n", _deltas[i].index, _deltas[i].ticks, _last_min_ticks);
                 // }
-                continue;
-            }
+            //     continue;
+            // }
 
             
             process_track_counts(midi, _deltas + i);
@@ -495,7 +500,7 @@ midi_result_t process_all_tracks(midi_info * midi)
 
     
     
-    mergeSort(_temp_ticks, 0, _tick_index - 1);
+    ticks_merge_sort(0, _tick_index - 1);
     dedup_ticks();
     printf("Event Bytes: %u, Unique Tick Count: %u, Tempo Changes: %u, Ticks: %u\n", _event_bytes_count, _unique_ticks_count, _tempo_change_count, _tick_index);
     for (uint32_t i = 0; i < _tick_index; i++)

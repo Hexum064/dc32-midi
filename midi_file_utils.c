@@ -11,6 +11,12 @@ FIL _current_file;
 DIR _root_dir;
 uint16_t _file_index;
 
+midi_result_t midi_move_pointer(FIL * fptr, uint32_t length)
+{
+    uint32_t start = f_tell(fptr);
+    return f_lseek(fptr, start + length);
+}
+
 //Reads the specified number of bytes at the current file ptr and updates the address with that len.
 midi_message_t read_status_data(FIL * fptr, track_info * track, bool * new_status)
 {
