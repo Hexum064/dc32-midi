@@ -1,0 +1,201 @@
+#include <stdio.h>
+#include "f_util.h"
+#include "ff.h"
+#include "pico/stdlib.h"
+#include "rtc.h"
+#include "hw_config.h"
+#include "string.h"
+#include <stdlib.h>
+#include "hardware/uart.h"
+#include "hardware/irq.h"
+
+#define MIDI_OUT_BAUD 31250
+
+typedef struct track_s 
+{
+    uint32_t address;
+    uint32_t offset;
+    uint32_t size;
+} track_info;
+
+
+track_info * _tracks;
+uint8_t track_cnt = 0;
+uint8_t midi_type = 0;
+uint16_t time_div = 0;
+
+uint32_t big_endian_to_int(uint8_t buff[4])
+{
+    return uint32_t(buff[0] << 24) + uint32_t(buff[1] << 16) + uint32_t(buff[2] << 8) + uint32_t(buff[3]);
+}
+
+uint16_t big_endian_to_word(uint8_t buff[2])
+{
+    return uint32_t(buff[0] << 8) + uint32_t(buff[1]);
+}
+
+uint16_t load_word(FIL * fptr, uint32_t offset)
+{
+    uint8_t buff[2];
+    f_lseek(fptr, offset);
+    f_read(fptr, buff, 2, 0);
+    return big_endian_to_word(buff);
+}
+
+void load_track_chunk_info(FIL * fptr, uint8_t count, uint8_t type) 
+{   
+    uint8_t buff[4];
+    uint32_t val;
+    UINT bytes_read = 0;
+    uint32_t offset = 14 + 4; //Start of first chunk + sig
+
+    for(uint8_t i = 0; i < count; i++)
+    {
+        f_lseek(fptr, offset);
+        f_read(fptr, buff, 4, 0);
+        val = big_endian_to_int(buff); //Chunk size
+        offset += 4; //move to start of data
+        _tracks[i].address = offset;
+        _tracks[i].size = val;
+        _tracks[i].offset = 0;
+
+        printf("Track: %d. Start: 0x%02x. Size: %u\n", i, offset, val);
+
+        offset += val + 4; //skip next sig
+        if (type == 0)
+        {
+            printf("\tType 0\n");
+            return;
+        }
+    }
+}
+
+void load_midi_type(FIL * fptr)
+{
+    midi_type = load_word(fptr, 8);
+}
+
+void load_track_addr_buffs(FIL * fptr)
+{
+    track_cnt = load_word(fptr, 10);
+
+    _tracks = (track_info *)malloc(sizeof(track_info) * track_cnt);
+}
+
+void load_time_div(FIL * fptr)
+{
+    time_div = load_word(fptr, 12);
+}
+
+static void uart0_rx_isr() 
+{
+  while (uart_is_readable(uart0)) {
+    printf("0x%02x\t", uart_getc(uart0));
+  }
+}
+
+void uart_init()
+{
+    uart_init(uart0, MIDI_OUT_BAUD);
+    gpio_set_function( 0, GPIO_FUNC_UART );
+    gpio_set_function( 1, GPIO_FUNC_UART );
+    uart_set_fifo_enabled(uart0, false);
+    irq_set_exclusive_handler(UART0_IRQ, uart0_rx_isr);
+    irq_set_enabled(UART0_IRQ, true);
+    uart_set_irq_enables(uart0, true, false);
+    // uart_set_irq_enables(PICO_DEFAULT_UART_INSTANCE, true, false);
+}
+
+
+
+int main() {
+    int i = 0;
+    stdio_init_all();
+    time_init();
+    uart_init();
+sleep_ms(2000);
+
+    printf("Starting...\n");
+
+    puts("Hello, world!");
+
+    // See FatFs - Generic FAT Filesystem Module, "Application Interface",
+    // http://elm-chan.org/fsw/ff/00index_e.html
+
+
+
+
+
+    sd_card_t *pSD = sd_get_by_num(0);
+    FRESULT fr = f_mount(&pSD->fatfs, pSD->pcName, 1);
+    if (FR_OK != fr) panic("f_mount error: %s (%d)\n", FRESULT_str(fr), fr);
+    FIL fil;
+    const char* const filename = "filename.txt";
+    fr = f_open(&fil, filename, FA_OPEN_APPEND | FA_WRITE);
+    if (FR_OK != fr && FR_EXIST != fr)
+        panic("f_open(%s) error: %s (%d)\n", filename, FRESULT_str(fr), fr);
+    if (f_printf(&fil, "Hello, world!\n") < 0) {
+        printf("f_printf failed\n");
+    }
+    fr = f_close(&fil);
+    if (FR_OK != fr) {
+        printf("f_close error: %s (%d)\n", FRESULT_str(fr), fr);
+    }
+    
+
+
+
+
+    DIR dir;                    // Directory
+    FILINFO fno;   
+    uint8_t buff[] = "....";
+    uint32_t val;
+    UINT bytes_read = 0;
+    uint16_t tracks;
+    FIL fil2;
+    char str_buff[256];
+
+    f_opendir(&dir, "/");   // Open Root
+    do
+    {
+        f_readdir(&dir, &fno);
+        if(fno.fname[0] != 0) {
+            printf("File %d found: %s\n", i++, fno.fname); // Print File Name
+
+            if (strstr(fno.fname, ".mid") || strstr(fno.fname, ".midi"))
+            {
+                printf("\tFound Midi File");
+                f_open(&fil, fno.fname, FA_READ);
+                load_midi_type(&fil);
+                load_time_div(&fil);
+                load_track_addr_buffs(&fil);
+                printf("\tFormat: %u\n", midi_type);
+                printf("\tTracks: %u\n", track_cnt);
+                printf("\tTime Div: %u\n", time_div);
+                load_track_chunk_info(&fil, track_cnt, midi_type);
+
+                for (uint8_t i = 0; i < track_cnt; i++)
+                {
+                    uart_putc_raw(uart0, (_tracks[i].size >> 24) & 0xff);
+                    uart_putc_raw(uart0, (_tracks[i].size >> 16) & 0xff);
+                    uart_putc_raw(uart0, (_tracks[i].size >> 8) & 0xff);
+                    uart_putc_raw(uart0, _tracks[i].size & 0xff);
+                }
+            }
+        }
+
+        
+    } while(fno.fname[0] != 0);
+
+    f_closedir(&dir);
+
+    f_unmount(pSD->pcName);
+
+    puts("Goodbye, world!");
+sleep_ms(2000);
+    // for (;;);
+    while(1){
+        // sleep_ms(250);
+        // printf("Ping %d\n", i++);
+    }
+}

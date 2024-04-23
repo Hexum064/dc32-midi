@@ -1,0 +1,26 @@
+{
+    "files.associations": {
+        "rtc.h": "c",
+        "ff.h": "c",
+        "stdlib.h": "c",
+        "uart.h": "c",
+        "midi.h": "c",
+        "gpio.h": "c",
+        "hw_config.h": "c",
+        "irq.h": "c",
+        "sd_card.h": "c",
+        "timer.h": "c",
+        "stdbool.h": "c",
+        "stdio.h": "c",
+        "f_util.h": "c",
+        "circular_buff.h": "c",
+        "concepts": "c",
+        "cstdio": "c",
+        "type_traits": "c",
+        "new": "c",
+        "typeinfo": "c"
+    },
+    "cSpell.words": [
+        "FRESULT"
+    ]
+}
