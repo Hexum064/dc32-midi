@@ -38,24 +38,36 @@ static void alarm_irq(void) {
 
     // process_midi = true;
     
-    for (uint32_t i = 0; i < midi.tick_count; i++)
-    {
-        if (midi.tick_data[i].ticks == _ticks)
-        {
-            _tick_index = i;
-            alarm_fired = true;
-            
-            break;
-        }
-    }
-    
-    _ticks++;
 
     
+    if (!is_transmitting())
+    {
+        for (uint32_t i = 0; i < midi.tick_count; i++)
+        {
+            if (midi.tick_data[i].ticks == _ticks)
+            {
+                _tick_index = i;
+                alarm_fired = true;
+                
+                break;
+            }
+        }        
+        _ticks++;
+
+    }
+    else
+    {
+        alarm_in_us(500);
+        return;        
+    }
+
     if (_tick_index < midi.tick_count)
     {
         alarm_in_us(midi.us_per_tick);
-    }
+        
+    }  
+    
+
 
 }
 
@@ -176,6 +188,7 @@ sleep_ms(2000);
             alarm_fired = false;
             printf("sending %u bytes for tick %u\n", midi.tick_data[_tick_index].length, _ticks );
             start_transmit(&midi.event_bytes[midi.tick_data[_tick_index].data_index], midi.tick_data[_tick_index].length);
+          
         }
 
     //    if (process_midi  )

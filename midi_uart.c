@@ -21,6 +21,7 @@ static void uart0_isr()
         {
             uart_set_irq_enables(uart0, true, false);
             sending_msg = false;
+            printf("Done sending\n");
         }
         else
         {
@@ -42,15 +43,18 @@ void serial_init()
     // uart_set_irq_enables(PICO_DEFAULT_UART_INSTANCE, true, false);
 }
 
-void start_transmit(uint8_t * data, uint8_t len)
+void start_transmit(uint8_t * data, uint16_t len)
 {
     msg_index = 0;
     msg_len = len;
     msg_buff = data;
     sending_msg = true;
-
-
-
+    
+    for(uint16_t i = 0; i < len; i++)
+    {
+        printf("0x%02x ", data[i]);
+    }
+    printf("\n");
 
     uart_set_irq_enables(uart0, true, true);
     irq_set_pending(UART0_IRQ);

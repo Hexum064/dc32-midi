@@ -184,6 +184,29 @@ midi_result_t load_track_chunk_info(FIL * fptr, midi_info * midi)
 midi_result_t midi_get_file_info(FIL * fptr, const TCHAR *path, midi_info * midi)
 {    
     if (f_open(fptr, path, FA_READ) != OK) return READ_ERROR;
+
+    FSIZE_t fSize = f_size(fptr);
+
+    printf("File size: %llu\n", fSize);
+
+    uint8_t * fBytes = (uint8_t *)malloc(fSize);
+
+    printf("Mem Alloc'd. Reading file...\n");
+
+    if (f_read(fptr, fBytes, fSize, 0) == FR_OK)
+    {
+        printf("File read. Freeing mem\n");
+    }
+    else
+    {
+        printf("File read failed. Freeing mem\n");
+    }
+
+    free(fBytes);
+
+
+
+
     if (load_midi_type(fptr, midi) != OK) return READ_ERROR;
     if (load_time_div(fptr, midi) != OK) return READ_ERROR;
     if (load_track_count(fptr, midi) != OK) return READ_ERROR;

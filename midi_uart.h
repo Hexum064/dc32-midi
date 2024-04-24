@@ -7,7 +7,7 @@
 
 void serial_init();
 
-void start_transmit(uint8_t * data, uint8_t len);
+void start_transmit(uint8_t * data, uint16_t len);
 
 bool is_transmitting();
 
