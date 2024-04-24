@@ -7,7 +7,7 @@
 // #define DEBUG
 
 #define BUFF_ADD_LEVEL 200
-#define DEFAULT_US_PER_TICK (500000/30) //TODO: Change back to 120
+#define DEFAULT_US_PER_TICK (500000/120) //TODO: Change back to 120
 
 typedef struct message_s
 {
@@ -21,12 +21,12 @@ typedef struct
 {
     uint32_t ticks;
     uint32_t tempo;
-} tempo_change;
+} midi_tempo_data;
 
 typedef struct
 {
     uint32_t ticks;
-    uint8_t * event_data;
+    uint32_t data_index;
     uint16_t length;
 
 } midi_tick_data;
@@ -36,7 +36,7 @@ typedef struct track_s
     uint32_t address;    
     uint32_t size;
     uint32_t delta;
-    // uint32_t elapsed;
+    uint32_t elapsed;
     uint8_t status;
     bool read_delta;
     bool eot_reached;
@@ -53,6 +53,8 @@ typedef struct midi_s
     uint32_t us_per_tick;
     uint8_t * event_bytes;
     midi_tick_data * tick_data;
+    midi_tempo_data * tempo_data;
+    uint32_t tick_count;
     FIL * file;
 } midi_info;
 
@@ -125,7 +127,7 @@ midi_result_t load_word(FIL * fptr, uint32_t offset, uint16_t * value);
 midi_result_t midi_get_file_info(FIL * fptr, const TCHAR *path, midi_info * midi);
 midi_result_t midi_mount_root(DIR * root);
 midi_result_t midi_open_sd();
-midi_result_t midi_move_pointer(FIL * fptr, uint32_t length);
+midi_result_t midi_move_file_pointer(FIL * fptr, uint32_t length, uint32_t * address);
 
 // midi_result_t midi_test();
 

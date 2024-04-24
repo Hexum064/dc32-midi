@@ -11,10 +11,12 @@ FIL _current_file;
 DIR _root_dir;
 uint16_t _file_index;
 
-midi_result_t midi_move_pointer(FIL * fptr, uint32_t length)
+midi_result_t midi_move_file_pointer(FIL * fptr, uint32_t length, uint32_t * address)
 {
-    uint32_t start = f_tell(fptr);
-    return f_lseek(fptr, start + length);
+
+    *address = *address + length;
+    return f_lseek(fptr, *address);
+    
 }
 
 //Reads the specified number of bytes at the current file ptr and updates the address with that len.
@@ -130,10 +132,11 @@ midi_result_t load_time_div(FIL * fptr, midi_info * midi)
     return OK;
 }
 
-midi_result_t load_track_chunk_info(FIL * fptr, uint8_t count, uint8_t type, midi_info * midi) 
+midi_result_t load_track_chunk_info(FIL * fptr, midi_info * midi) 
 {   
     uint8_t buff[4];
     uint32_t val;
+    
     UINT bytes_read = 0;
     uint32_t offset = 14 + 4; //Start of first chunk + sig
 
@@ -142,9 +145,14 @@ midi_result_t load_track_chunk_info(FIL * fptr, uint8_t count, uint8_t type, mid
         free(midi->tracks);
     }
 
-    midi->tracks = (track_info *)malloc(sizeof(track_info) * val);
 
-    for(uint8_t i = 0; i < count; i++)
+
+    printf("Track count: %d\n", midi->track_cnt);
+
+    midi->tracks = (track_info *)malloc(sizeof(track_info) * midi->track_cnt);
+
+
+    for(uint8_t i = 0; i < midi->track_cnt; i++)
     {
         if (f_lseek(fptr, offset) != OK) return READ_ERROR;
         if (f_read(fptr, buff, 4, 0) != OK) return READ_ERROR;
@@ -156,12 +164,13 @@ midi_result_t load_track_chunk_info(FIL * fptr, uint8_t count, uint8_t type, mid
         midi->tracks[i].delta = 0;
         midi->tracks[i].status = 0;
         midi->tracks[i].eot_reached = false;
+        midi->tracks[i].elapsed = 0;
 
         // printf("Track: %d. Start: 0x%02x. Size: %u\n", i, offset, val);
 
         offset += val + 4; //skip next sig
         //TODO: make sure this accounts for type 0 correctly.
-        if (type == 0)
+        if (midi->type == 0)
         {
             // printf("\tType 0\n");
             return OK;
@@ -178,7 +187,7 @@ midi_result_t midi_get_file_info(FIL * fptr, const TCHAR *path, midi_info * midi
     if (load_midi_type(fptr, midi) != OK) return READ_ERROR;
     if (load_time_div(fptr, midi) != OK) return READ_ERROR;
     if (load_track_count(fptr, midi) != OK) return READ_ERROR;
-    if (load_track_chunk_info(fptr, midi->track_cnt, midi->type, midi) != OK) return READ_ERROR;
+    if (load_track_chunk_info(fptr, midi) != OK) return READ_ERROR;
 
     strcpy(midi->name, path);
     midi->file = fptr;

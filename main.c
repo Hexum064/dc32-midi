@@ -24,9 +24,10 @@
 
 midi_info midi;
 // bool process_midi = false;
-// uint32_t _ticks = 0;
+uint32_t _ticks = 0;
+uint32_t _tick_index = 0;
 // uint8_t _buff[255];
-
+ 
 // Alarm interrupt handler
 static volatile bool alarm_fired;
 static void alarm_in_us(uint32_t delay_us) ;
@@ -36,9 +37,26 @@ static void alarm_irq(void) {
     hw_clear_bits(&timer_hw->intr, 1u << ALARM_NUM);
 
     // process_midi = true;
-    // _ticks++;
     
-    alarm_in_us(midi.us_per_tick);
+    for (uint32_t i = 0; i < midi.tick_count; i++)
+    {
+        if (midi.tick_data[i].ticks == _ticks)
+        {
+            _tick_index = i;
+            alarm_fired = true;
+            
+            break;
+        }
+    }
+    
+    _ticks++;
+
+    
+    if (_tick_index < midi.tick_count)
+    {
+        alarm_in_us(midi.us_per_tick);
+    }
+
 }
 
 static void alarm_in_us(uint32_t delay_us) {
@@ -104,12 +122,13 @@ static void alarm_in_us(uint32_t delay_us) {
 //     }
 // }
 
+
 int main() {
     int i = 0;
     
     stdio_init_all();
-    // time_init();
-    // serial_init();
+    time_init();
+    serial_init();
 
 sleep_ms(2000);
 
@@ -117,7 +136,7 @@ sleep_ms(2000);
 
     puts("Hello, world!");
 
-     
+
 
     midi_init();
     
@@ -149,12 +168,15 @@ sleep_ms(2000);
 
     puts("Goodbye, world!");
 sleep_ms(2000);
-//   alarm_in_us(midi.us_per_tick);
+   alarm_in_us(midi.us_per_tick);
     while(1){
-        //alarm_fired = false;
-       
-        // Wait for alarm to fire
-       // while (!alarm_fired);
+
+        if (alarm_fired)
+        {
+            alarm_fired = false;
+            printf("sending %u bytes for tick %u\n", midi.tick_data[_tick_index].length, _ticks );
+            start_transmit(&midi.event_bytes[midi.tick_data[_tick_index].data_index], midi.tick_data[_tick_index].length);
+        }
 
     //    if (process_midi  )
     //    {

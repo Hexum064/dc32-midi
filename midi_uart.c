@@ -1,9 +1,11 @@
+#include <stdlib.h>
+#include <stdio.h>
 #include "midi_uart.h"
 #include "pico/stdlib.h"
 
-uint8_t msg_len = 0;
-uint8_t msg_index = 0;
-uint8_t msg_buff[255];
+uint16_t msg_len = 0;
+uint16_t msg_index = 0;
+uint8_t * msg_buff;
 bool sending_msg = false;
 
 
@@ -44,7 +46,12 @@ void start_transmit(uint8_t * data, uint8_t len)
 {
     msg_index = 0;
     msg_len = len;
+    msg_buff = data;
     sending_msg = true;
+
+
+
+
     uart_set_irq_enables(uart0, true, true);
     irq_set_pending(UART0_IRQ);
 }
