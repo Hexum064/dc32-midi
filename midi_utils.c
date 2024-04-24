@@ -1,5 +1,18 @@
 #include "midi.h"
+#include <stdbool.h>
 
+bool end_of_midi(midi_info * midi)
+{    
+    for (uint8_t i = 0; i < midi->track_cnt; i++)
+    {
+        if (!midi->tracks[i].eot_reached)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
 
 
 uint32_t big_endian_to_int(uint8_t buff[4])

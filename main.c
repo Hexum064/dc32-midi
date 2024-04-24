@@ -99,6 +99,10 @@ sleep_ms(2000);
 
     while(1)
     {
+        if (end_of_midi(&midi))
+        {
+            break;
+        }
 
         while(_ticks < _next_tick || is_transmitting())
         {            

@@ -91,6 +91,7 @@ typedef enum midi_meta_enum
 
 uint32_t big_endian_to_int(uint8_t buff[4]);
 uint16_t big_endian_to_word(uint8_t buff[2]);
+bool end_of_midi(midi_info * midi);
 
 /// @brief processes the tracks to get the events at the next ticks
 /// @param midi the midi data
