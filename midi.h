@@ -6,8 +6,9 @@
 
 // #define DEBUG
 
+#define MAX_FILE_SIZE 128000LU
 #define BUFF_ADD_LEVEL 200
-#define DEFAULT_US_PER_TICK (500000/30) //TODO: Change back to 120
+#define DEFAULT_US_PER_TICK (500000/96) //default to 96 bpm 
 
 typedef void (* _message_cb_t)(uint8_t * data, uint8_t length);
 
@@ -42,7 +43,9 @@ typedef enum midi_result_enum
 {
     OK,
     NO_MIDI,
-    READ_ERROR
+    READ_ERROR,
+    TOO_BIG,
+    UNSUPPORTED
 } midi_result_t;
 
 

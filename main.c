@@ -1,5 +1,3 @@
-//TODO: count ticks, process buff based on ticks and send uart
-//TODO: also filter out repeat status vals
 
 #include <stdio.h>
 #include "f_util.h"
@@ -26,7 +24,7 @@ midi_info midi;
 bool process_midi = false;
 uint32_t _ticks = 0;
 uint32_t _next_tick = 0;
-// uint8_t _buff[255];
+
 
 // Alarm interrupt handler
 static volatile bool alarm_fired;

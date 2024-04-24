@@ -79,7 +79,8 @@ void process_track(midi_info * midi, uint8_t track_index, uint8_t * message_data
             {
                 //These are Sys common and sys real-time messages
                 case SYS_EX:
-                //TODO: read and skip data. We don't care about these
+                    //Skip ahead till the end. We are not using it.
+                    while (midi->midi_data[track->offset++] != END_SYS_EX);
                     break;
                 case MIDI_START:
                     //Nothing to send here. We will use this as a control here
@@ -144,7 +145,7 @@ printf("\tTrk: %d, setting tempo: %u, time div: %u, us/tick: %u\n", track_index,
                         case SMPTE_OFFSET:
                             track->offset += len;
                             //Nothing to send but we need to update the time sig
-                            //TODO: update time signature
+                            //NOTE: not supporting SMPTE
                             break;                                             
                         default:
                             track->offset += len;

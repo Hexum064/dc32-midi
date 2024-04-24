@@ -112,7 +112,10 @@ midi_result_t load_midi_file(FIL * fptr, midi_info * midi)
 {
     FSIZE_t size = f_size(fptr);
     
-//TODO: Check max file size
+    if (size > MAX_FILE_SIZE)
+    {
+        return TOO_BIG;
+    }
 
     printf("Loading midi file. Size: %llu\n", size);
     
@@ -166,12 +169,7 @@ void load_track_chunk_info(midi_info * midi)
         init_track(midi->tracks + i, offset, chunk_size);
         
         offset += chunk_size + 4; //skip next sig
-        //TODO: make sure this accounts for type 0 correctly.
-        if (midi->type == 0)
-        {
-            // printf("\tType 0\n");
-            return;
-        }
+        //We don't have to do anything special for type 0
     }    
 }
 
@@ -182,6 +180,13 @@ midi_result_t midi_get_file_info(FIL * fptr, midi_info * midi)
     if (load_midi_file(fptr, midi) != OK) return READ_ERROR;
     load_midi_type(midi);
     load_time_div(midi);
+
+    //Not going to support SMPTE time format
+    if ((midi->time_div & 0x80))
+    {
+        return UNSUPPORTED;
+    }
+
     load_track_count(midi);
     load_track_chunk_info(midi);
 
