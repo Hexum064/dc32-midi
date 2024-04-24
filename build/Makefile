@@ -2118,29 +2118,29 @@ midi_file_utils.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\grumpy2-main.dir\build.make CMakeFiles/grumpy2-main.dir/midi_file_utils.c.s
 .PHONY : midi_file_utils.c.s
 
-midi_loader.obj: midi_loader.c.obj
-.PHONY : midi_loader.obj
+midi_player.obj: midi_player.c.obj
+.PHONY : midi_player.obj
 
 # target to build an object file
-midi_loader.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\grumpy2-main.dir\build.make CMakeFiles/grumpy2-main.dir/midi_loader.c.obj
-.PHONY : midi_loader.c.obj
+midi_player.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\grumpy2-main.dir\build.make CMakeFiles/grumpy2-main.dir/midi_player.c.obj
+.PHONY : midi_player.c.obj
 
-midi_loader.i: midi_loader.c.i
-.PHONY : midi_loader.i
+midi_player.i: midi_player.c.i
+.PHONY : midi_player.i
 
 # target to preprocess a source file
-midi_loader.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\grumpy2-main.dir\build.make CMakeFiles/grumpy2-main.dir/midi_loader.c.i
-.PHONY : midi_loader.c.i
+midi_player.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\grumpy2-main.dir\build.make CMakeFiles/grumpy2-main.dir/midi_player.c.i
+.PHONY : midi_player.c.i
 
-midi_loader.s: midi_loader.c.s
-.PHONY : midi_loader.s
+midi_player.s: midi_player.c.s
+.PHONY : midi_player.s
 
 # target to generate assembly for a file
-midi_loader.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\grumpy2-main.dir\build.make CMakeFiles/grumpy2-main.dir/midi_loader.c.s
-.PHONY : midi_loader.c.s
+midi_player.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\grumpy2-main.dir\build.make CMakeFiles/grumpy2-main.dir/midi_player.c.s
+.PHONY : midi_player.c.s
 
 midi_uart.obj: midi_uart.c.obj
 .PHONY : midi_uart.obj
@@ -2444,9 +2444,9 @@ help:
 	@echo ... midi_file_utils.obj
 	@echo ... midi_file_utils.i
 	@echo ... midi_file_utils.s
-	@echo ... midi_loader.obj
-	@echo ... midi_loader.i
-	@echo ... midi_loader.s
+	@echo ... midi_player.obj
+	@echo ... midi_player.i
+	@echo ... midi_player.s
 	@echo ... midi_uart.obj
 	@echo ... midi_uart.i
 	@echo ... midi_uart.s

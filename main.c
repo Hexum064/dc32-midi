@@ -23,8 +23,9 @@
 #define ALARM_IRQ TIMER_IRQ_0
 
 midi_info midi;
-// bool process_midi = false;
-// uint32_t _ticks = 0;
+bool process_midi = false;
+uint32_t _ticks = 0;
+uint32_t _next_tick = 0;
 // uint8_t _buff[255];
 
 // Alarm interrupt handler
@@ -35,9 +36,8 @@ static void alarm_irq(void) {
     // Clear the alarm irq
     hw_clear_bits(&timer_hw->intr, 1u << ALARM_NUM);
 
-    // process_midi = true;
-    // _ticks++;
     
+    _ticks++;
     alarm_in_us(midi.us_per_tick);
 }
 
@@ -62,54 +62,12 @@ static void alarm_in_us(uint32_t delay_us) {
 }
 
 
-
-
-// void msg_stream_cb(uint8_t * stream, uint8_t length)
-// {
-//     printf("Msg stream");
-//     for (uint8_t i = 0; i < length; i++)
-//     {
-//         printf (", 0x%02x", stream[i]);
-//     }
-//     printf("\n");
-
-//     start_transmit(stream, length);
-  
-
-// }
-
-// void stage_data_transmit()
-// {
-//     uint8_t idx = 0;
-//     midi_message msg;
-//     while(cb_count())
-//     {
-//         if (cb_deque(&msg, _ticks))
-//         {
-//             for (uint8_t i = 0; i < msg.len; i++)
-//             {
-//                 _buff[idx++] = msg.data[i];
-//             }
-//         }
-//         else
-//         {
-//             break;
-//         }
-        
-//     }
-
-//     if (idx > 0)
-//     {
-//         start_transmit(_buff, idx);
-//     }
-// }
-
 int main() {
     int i = 0;
     
     stdio_init_all();
-    // time_init();
-    // serial_init();
+
+    serial_init();
 
 sleep_ms(2000);
 
@@ -119,20 +77,51 @@ sleep_ms(2000);
 
      
 
-    midi_init();
+    midi_init(&midi);
     
-    midi.tracks = 0; //Important so that the random value in tracks does not get used in "free";
-    midi.us_per_tick  = DEFAULT_US_PER_TICK;
+
     midi_result_t res = midi_next(&midi);
 
     printf("Res: %d, #%d: %s, type: %d, tracks: %d, time: %d\n", res, midi.index, midi.name, midi.type, midi.track_cnt, midi.time_div);
 
     for (uint8_t i = 0; i < midi.track_cnt; i++)
     {
-        printf("\tTrack %d, size: %d, addr: 0x%08x\n",i, midi.tracks[i].size, midi.tracks[i].address);
+        printf("\tTrack %d, size: %d, addr: 0x%08x\n",i, midi.tracks[i].size, midi.tracks[i].offset);
     }
 
-    process_all_tracks(&midi);
+
+
+    uint8_t msg[128];
+    uint8_t len;
+   
+
+   alarm_in_us(midi.us_per_tick);
+
+    while(1)
+    {
+
+        while(_ticks < _next_tick || is_transmitting())
+        {            
+            
+        }
+
+        //make sure _next_tick starts at 0
+        if (!process_all_tracks(&midi, msg, &len, &_next_tick))
+        {
+            break;
+        }
+
+
+
+        printf("Sending %d bytes at tick %u\n\tNext: %u\n", len, _ticks, _next_tick);
+   
+        start_transmit(msg, len);
+
+
+       
+    }
+
+    // process_all_tracks(&midi);
 
     //start the ticks
     
@@ -148,8 +137,8 @@ sleep_ms(2000);
    
 
     puts("Goodbye, world!");
-sleep_ms(2000);
-//   alarm_in_us(midi.us_per_tick);
+
+//   
     while(1){
         //alarm_fired = false;
        

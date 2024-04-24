@@ -25,7 +25,7 @@ add_executable(grumpy2-main
     hw_config.c
     midi_file_utils.c
     midi_utils.c
-    midi_loader.c
+    midi_player.c
     midi_uart.c    
 )
 

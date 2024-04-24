@@ -4,9 +4,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include "hw_config.h"
 
-sd_card_t *sd_ptr;
+bool _is_initialized = false;
+sd_card_t * _sd_ptr;
 FIL _current_file;
 DIR _root_dir;
 uint16_t _file_index;
@@ -24,7 +26,7 @@ midi_message_t read_status_data(FIL * fptr, track_info * track, bool * new_statu
         // printf("New status: 0x%02x\n", track->status);
         //new status
         *new_status = true;
-        track->address++;
+        track->offset++;
         track->status = status;
     }
     else
@@ -61,134 +63,141 @@ midi_message_t peek_current_data(FIL * fptr, uint8_t * buff, uint8_t len)
     return OK;
 }
 
-//Set up to read a variable length quantity, up to 32 bits
-midi_result_t get_VLQ(FIL * fptr, uint32_t * address, uint32_t * iptr)
+/// @brief Set up to read a variable length quantity, up to 32 bits
+/// @param data the data array to read from
+/// @param offset the byte offset in that array
+/// @param iptr a pointer to a 32bit unsigned int value for the VQL
+/// @return the number of bytes read
+uint8_t get_VLQ(uint8_t * data, uint32_t offset, uint32_t * iptr)
 {
-    uint8_t data;
+    uint8_t byte;
     uint32_t value = 0;  
+    uint8_t count = 0;
 
     do
     {
-        value <<= 7;
-        // printf("\t\tVLQ: reading next byte\n");
-        if (read_current_data(fptr, address, &data, 1) != OK) return READ_ERROR;  
-        // printf("\t\tVLQ: data: %d, val: %d\n", data, value);
-        value += data & 0x7F;
+        value <<= 7;;
+        byte =  data[offset+count];
+        value += byte & 0x7F;
+        count++;
     //If the MSB is set then we are still processing a VLQ    
-    } while ((data & 0x80));
+    } while ((byte & 0x80));
     
-    *iptr = value;
+    *iptr = value;  
+    return count;  
+}
+
+
+void load_word(uint8_t * data, uint32_t offset, uint16_t * value)
+{
+    *value = big_endian_to_word(data + offset);    
+}
+
+void load_midi_type(midi_info * midi)
+{
+    load_word(midi->midi_data, 8, &midi->type);
+}
+
+void load_track_count(midi_info * midi)
+{
+    load_word(midi->midi_data, 10, &midi->track_cnt);
+}
+
+void load_time_div(midi_info * midi)
+{
+    load_word(midi->midi_data, 12, &midi->time_div);
+}
+
+midi_result_t load_midi_file(FIL * fptr, midi_info * midi)
+{
+    FSIZE_t size = f_size(fptr);
+    
+//TODO: Check max file size
+
+    printf("Loading midi file. Size: %llu\n", size);
+    
+    //First make sure we get rid of any previous file
+    if (midi->midi_data)
+    {
+        free(midi->midi_data);
+    }
+
+    midi->midi_data = (uint8_t *)malloc(size);
+
+    if (f_lseek(fptr, 0) != OK) return READ_ERROR;
+    if (f_read(fptr, midi->midi_data, size, 0) != OK) return READ_ERROR;
+
+    printf("Midi file loaded\n");
+
     return OK;
 }
 
-
-midi_result_t load_word(FIL * fptr, uint32_t offset, uint16_t * value)
+void init_track(track_info * track, uint32_t offset, uint32_t chunk_size)
 {
-    uint8_t buff[2];
-    if (f_lseek(fptr, offset) != OK) return READ_ERROR;
-    if (f_read(fptr, buff, 2, 0) != OK) return READ_ERROR;
-    *value = big_endian_to_word(buff);
-    return OK;
+    track->offset = offset; //address should be first actual data byte after size
+    track->size = chunk_size;
+    track->read_delta = true;
+    track->delta = 0;
+    track->status = 0;
+    track->eot_reached = false;
+    track->elapsed = 0;    
 }
 
-midi_result_t load_midi_type(FIL * fptr, midi_info * midi)
-{
-    uint16_t val;
-    if (load_word(fptr, 8, &val) != OK) return READ_ERROR;
-    
-    midi->type = val;
-
-    return OK;
-}
-
-midi_result_t load_track_count(FIL * fptr, midi_info * midi)
-{
-  
-    uint16_t val;
-    if (load_word(fptr, 10, &val) != OK) return READ_ERROR;
-    
-    midi->track_cnt = val;
-
-
-    return OK;    
-
-}
-
-midi_result_t load_time_div(FIL * fptr, midi_info * midi)
-{
-    uint16_t val;
-    if (load_word(fptr, 12, &val) != OK) return READ_ERROR;
-    
-    midi->time_div = val;
-
-    return OK;
-}
-
-midi_result_t load_track_chunk_info(FIL * fptr, uint8_t count, uint8_t type, midi_info * midi) 
+void load_track_chunk_info(midi_info * midi) 
 {   
     uint8_t buff[4];
-    uint32_t val;
+    uint32_t chunk_size;
     UINT bytes_read = 0;
     uint32_t offset = 14 + 4; //Start of first chunk + sig
 
+    //Make sure to free up any previous tracks
     if (midi->tracks)
     {
         free(midi->tracks);
     }
 
-    midi->tracks = (track_info *)malloc(sizeof(track_info) * val);
+    midi->tracks = (track_info *)malloc(sizeof(track_info) * midi->track_cnt);
 
-    for(uint8_t i = 0; i < count; i++)
+    for(uint8_t i = 0; i < midi->track_cnt; i++)
     {
-        if (f_lseek(fptr, offset) != OK) return READ_ERROR;
-        if (f_read(fptr, buff, 4, 0) != OK) return READ_ERROR;
-        val = big_endian_to_int(buff); //Chunk size
+
+        chunk_size = big_endian_to_int(midi->midi_data + offset); //Chunk size
         offset += 4; //move to start of data
-        midi->tracks[i].address = offset; //address should be first actual data byte after size
-        midi->tracks[i].size = val;
-        midi->tracks[i].read_delta = true;
-        midi->tracks[i].delta = 0;
-        midi->tracks[i].status = 0;
-        midi->tracks[i].eot_reached = false;
-
-        // printf("Track: %d. Start: 0x%02x. Size: %u\n", i, offset, val);
-
-        offset += val + 4; //skip next sig
+        init_track(midi->tracks + i, offset, chunk_size);
+        
+        offset += chunk_size + 4; //skip next sig
         //TODO: make sure this accounts for type 0 correctly.
-        if (type == 0)
+        if (midi->type == 0)
         {
             // printf("\tType 0\n");
-            return OK;
+            return;
         }
-    }
+    }    
+}
+
+
+midi_result_t midi_get_file_info(FIL * fptr, midi_info * midi)
+{   
+  
+    if (load_midi_file(fptr, midi) != OK) return READ_ERROR;
+    load_midi_type(midi);
+    load_time_div(midi);
+    load_track_count(midi);
+    load_track_chunk_info(midi);
 
     return OK;
 }
 
-
-midi_result_t midi_get_file_info(FIL * fptr, const TCHAR *path, midi_info * midi)
-{    
-    if (f_open(fptr, path, FA_READ) != OK) return READ_ERROR;
-    if (load_midi_type(fptr, midi) != OK) return READ_ERROR;
-    if (load_time_div(fptr, midi) != OK) return READ_ERROR;
-    if (load_track_count(fptr, midi) != OK) return READ_ERROR;
-    if (load_track_chunk_info(fptr, midi->track_cnt, midi->type, midi) != OK) return READ_ERROR;
-
-    strcpy(midi->name, path);
-    midi->file = fptr;
-
-    return OK;
-}
 
 midi_result_t midi_open_sd()
 {
-    if (sd_ptr)
+    if (_sd_ptr)
     {
-        f_unmount(sd_ptr->pcName);
+        f_unmount(_sd_ptr->pcName);
     }
 
-    sd_ptr = sd_get_by_num(0);
-    FRESULT fr = f_mount(&sd_ptr->fatfs, sd_ptr->pcName, 1);
+    _sd_ptr = sd_get_by_num(0);
+    FRESULT fr = f_mount(&_sd_ptr->fatfs, _sd_ptr->pcName, 1);
 
     if (FR_OK != fr) 
     {
@@ -213,6 +222,7 @@ midi_result_t midi_mount_root(DIR * root)
 //Move forward from the first midi found until we get to the 0-based index of the file at that index
 midi_result_t get_file_at_index(uint16_t index, midi_info * midi)
 {
+    FIL fptr;
     FILINFO f_info;    
     midi->index = index;
     //Always start at the beginning
@@ -236,10 +246,14 @@ midi_result_t get_file_at_index(uint16_t index, midi_info * midi)
         
     }
 
+    strcpy(midi->name, f_info.fname); 
+    printf("Mounting file: %s\n", f_info.fname);
+    if (f_open(&fptr, f_info.fname, FA_READ) != OK) return READ_ERROR;  
     //If we reach here, we found the midi file at the index requested;
-    if (midi_get_file_info(&_current_file, f_info.fname, midi) != FR_OK) return READ_ERROR;
-
-    return OK;
+    printf("Loading midi file\n");
+    if (midi_get_file_info(&fptr, midi) != FR_OK) return READ_ERROR;
+    //Make sure to close the file
+    return f_close(&fptr);
 }
 
 //Start and the beginning and move through all the midis till no more are found.
@@ -308,8 +322,16 @@ midi_result_t midi_previous(midi_info * midi)
     return res;
 }
 
-midi_result_t midi_init()
+midi_result_t midi_init(midi_info * midi)
 {
+    _is_initialized = false;
+    midi->index = 0;
+    midi->midi_data = 0;
+    midi->time_div = 0;
+    midi->track_cnt = 0;
+    midi->tracks = 0;
+    midi->type = 0;
+    midi->us_per_tick = DEFAULT_US_PER_TICK;
 
     if (midi_open_sd() != OK) return READ_ERROR;
     if (midi_mount_root(&_root_dir) != OK) return READ_ERROR;
@@ -319,7 +341,13 @@ midi_result_t midi_init()
     // _message_cb = message_cb;
     // _msg_stream_cb = msg_stream_cb;
 
-            
+    _is_initialized = true;
+
     return OK;
 
+}
+
+bool is_initialized()
+{
+    return _is_initialized;
 }

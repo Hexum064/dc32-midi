@@ -3809,7 +3809,7 @@ CMakeFiles/grumpy2-main.dir/midi_file_utils.c.obj: M:/BFB/DC32/grumpy-badge/code
   C:/VSARM/armcc/10\ 2021.10/lib/gcc/arm-none-eabi/10.3.1/include/stddef.h \
   C:/VSARM/armcc/10\ 2021.10/lib/gcc/arm-none-eabi/10.3.1/include/stdint.h
 
-CMakeFiles/grumpy2-main.dir/midi_loader.c.obj: M:/BFB/DC32/grumpy-badge/code/midi_loader.c \
+CMakeFiles/grumpy2-main.dir/midi_player.c.obj: M:/BFB/DC32/grumpy-badge/code/midi_player.c \
   C:/VSARM/sdk/pico/pico-sdk/src/boards/include/boards/pico.h \
   C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/cmsis/include/cmsis/rename_exceptions.h \
   C:/VSARM/sdk/pico/pico-sdk/src/common/pico_base/include/pico.h \
@@ -3926,14 +3926,32 @@ CMakeFiles/grumpy2-main.dir/midi_uart.c.obj: M:/BFB/DC32/grumpy-badge/code/midi_
   C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/_newlib_version.h \
   C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/assert.h \
   C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/machine/_default_types.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/machine/_endian.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/machine/_types.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/machine/endian.h \
   C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/machine/ieeefp.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/machine/types.h \
   C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/newlib.h \
   C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/stdint.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/stdio.h \
   C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/_intsup.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/_pthreadtypes.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/_sigset.h \
   C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/_stdint.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/_timespec.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/_timeval.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/_types.h \
   C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/cdefs.h \
   C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/config.h \
   C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/features.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/lock.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/reent.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/sched.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/select.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/stdio.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/timespec.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/types.h \
+  C:/VSARM/armcc/10\ 2021.10/lib/gcc/arm-none-eabi/10.3.1/include/stdarg.h \
   C:/VSARM/armcc/10\ 2021.10/lib/gcc/arm-none-eabi/10.3.1/include/stdbool.h \
   C:/VSARM/armcc/10\ 2021.10/lib/gcc/arm-none-eabi/10.3.1/include/stddef.h \
   C:/VSARM/armcc/10\ 2021.10/lib/gcc/arm-none-eabi/10.3.1/include/stdint.h
@@ -4135,8 +4153,6 @@ C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/machine/types.h:
 C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/_locale.h:
 
 C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/_pthreadtypes.h:
-
-M:/BFB/DC32/grumpy-badge/code/midi_loader.c:
 
 C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/_timespec.h:
 
@@ -4511,5 +4527,7 @@ M:/BFB/DC32/grumpy-badge/code/FatFs_SPI/include/rtc.h:
 M:/BFB/DC32/grumpy-badge/code/hw_config.c:
 
 M:/BFB/DC32/grumpy-badge/code/midi_file_utils.c:
+
+M:/BFB/DC32/grumpy-badge/code/midi_player.c:
 
 M:/BFB/DC32/grumpy-badge/code/midi_uart.c:
