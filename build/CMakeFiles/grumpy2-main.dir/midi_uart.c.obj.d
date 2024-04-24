@@ -51,4 +51,23 @@ CMakeFiles/grumpy2-main.dir/midi_uart.c.obj: \
  C:\VSARM\sdk\pico\pico-sdk\src\rp2_common\hardware_irq\include/hardware/irq.h \
  C:\VSARM\sdk\pico\pico-sdk\src\rp2040\hardware_regs\include/hardware/regs/intctrl.h \
  C:\VSARM\sdk\pico\pico-sdk\src\rp2040\hardware_regs\include/hardware/regs/m0plus.h \
- C:\VSARM\sdk\pico\pico-sdk\src\rp2_common\pico_stdio_usb\include/pico/stdio_usb.h
+ C:\VSARM\sdk\pico\pico-sdk\src\rp2_common\pico_stdio_usb\include/pico/stdio_usb.h \
+ c:\vsarm\armcc\102021~1.10\arm-none-eabi\include\stdio.h \
+ c:\vsarm\armcc\102021~1.10\lib\gcc\arm-none-eabi\10.3.1\include\stdarg.h \
+ c:\vsarm\armcc\102021~1.10\arm-none-eabi\include\sys\reent.h \
+ c:\vsarm\armcc\102021~1.10\arm-none-eabi\include\_ansi.h \
+ c:\vsarm\armcc\102021~1.10\arm-none-eabi\include\sys\_types.h \
+ c:\vsarm\armcc\102021~1.10\arm-none-eabi\include\machine\_types.h \
+ c:\vsarm\armcc\102021~1.10\arm-none-eabi\include\sys\lock.h \
+ c:\vsarm\armcc\102021~1.10\arm-none-eabi\include\sys\types.h \
+ c:\vsarm\armcc\102021~1.10\arm-none-eabi\include\machine\endian.h \
+ c:\vsarm\armcc\102021~1.10\arm-none-eabi\include\machine\_endian.h \
+ c:\vsarm\armcc\102021~1.10\arm-none-eabi\include\sys\select.h \
+ c:\vsarm\armcc\102021~1.10\arm-none-eabi\include\sys\_sigset.h \
+ c:\vsarm\armcc\102021~1.10\arm-none-eabi\include\sys\_timeval.h \
+ c:\vsarm\armcc\102021~1.10\arm-none-eabi\include\sys\timespec.h \
+ c:\vsarm\armcc\102021~1.10\arm-none-eabi\include\sys\_timespec.h \
+ c:\vsarm\armcc\102021~1.10\arm-none-eabi\include\sys\_pthreadtypes.h \
+ c:\vsarm\armcc\102021~1.10\arm-none-eabi\include\sys\sched.h \
+ c:\vsarm\armcc\102021~1.10\arm-none-eabi\include\machine\types.h \
+ c:\vsarm\armcc\102021~1.10\arm-none-eabi\include\sys\stdio.h

@@ -202,7 +202,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "M:/BFB/DC32/grumpy-badge/code/hw_config.c" "CMakeFiles/grumpy2-main.dir/hw_config.c.obj" "gcc" "CMakeFiles/grumpy2-main.dir/hw_config.c.obj.d"
   "M:/BFB/DC32/grumpy-badge/code/main.c" "CMakeFiles/grumpy2-main.dir/main.c.obj" "gcc" "CMakeFiles/grumpy2-main.dir/main.c.obj.d"
   "M:/BFB/DC32/grumpy-badge/code/midi_file_utils.c" "CMakeFiles/grumpy2-main.dir/midi_file_utils.c.obj" "gcc" "CMakeFiles/grumpy2-main.dir/midi_file_utils.c.obj.d"
-  "M:/BFB/DC32/grumpy-badge/code/midi_loader.c" "CMakeFiles/grumpy2-main.dir/midi_loader.c.obj" "gcc" "CMakeFiles/grumpy2-main.dir/midi_loader.c.obj.d"
+  "M:/BFB/DC32/grumpy-badge/code/midi_player.c" "CMakeFiles/grumpy2-main.dir/midi_player.c.obj" "gcc" "CMakeFiles/grumpy2-main.dir/midi_player.c.obj.d"
   "M:/BFB/DC32/grumpy-badge/code/midi_uart.c" "CMakeFiles/grumpy2-main.dir/midi_uart.c.obj" "gcc" "CMakeFiles/grumpy2-main.dir/midi_uart.c.obj.d"
   "M:/BFB/DC32/grumpy-badge/code/midi_utils.c" "CMakeFiles/grumpy2-main.dir/midi_utils.c.obj" "gcc" "CMakeFiles/grumpy2-main.dir/midi_utils.c.obj.d"
   "C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_standard_link/new_delete.cpp" "CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_standard_link/new_delete.cpp.obj" "gcc" "CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_standard_link/new_delete.cpp.obj.d"

@@ -2459,7 +2459,7 @@
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
-			"path" : "midi_loader.c",
+			"path" : "midi_player.c",
 			"sourceGroupIndex" : 0
 		},
 		{

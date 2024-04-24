@@ -124,19 +124,19 @@ CMakeFiles/grumpy2-main.dir/midi_utils.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/grumpy2-main.dir/midi_utils.c.s"
 	C:\VSARM\armcc\102021~1.10\bin\AR19DD~1.EXE $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S M:\BFB\DC32\grumpy-badge\code\midi_utils.c -o CMakeFiles\grumpy2-main.dir\midi_utils.c.s
 
-CMakeFiles/grumpy2-main.dir/midi_loader.c.obj: CMakeFiles/grumpy2-main.dir/flags.make
-CMakeFiles/grumpy2-main.dir/midi_loader.c.obj: M:/BFB/DC32/grumpy-badge/code/midi_loader.c
-CMakeFiles/grumpy2-main.dir/midi_loader.c.obj: CMakeFiles/grumpy2-main.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=M:\BFB\DC32\grumpy-badge\code\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/grumpy2-main.dir/midi_loader.c.obj"
-	C:\VSARM\armcc\102021~1.10\bin\AR19DD~1.EXE $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/grumpy2-main.dir/midi_loader.c.obj -MF CMakeFiles\grumpy2-main.dir\midi_loader.c.obj.d -o CMakeFiles\grumpy2-main.dir\midi_loader.c.obj -c M:\BFB\DC32\grumpy-badge\code\midi_loader.c
+CMakeFiles/grumpy2-main.dir/midi_player.c.obj: CMakeFiles/grumpy2-main.dir/flags.make
+CMakeFiles/grumpy2-main.dir/midi_player.c.obj: M:/BFB/DC32/grumpy-badge/code/midi_player.c
+CMakeFiles/grumpy2-main.dir/midi_player.c.obj: CMakeFiles/grumpy2-main.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=M:\BFB\DC32\grumpy-badge\code\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/grumpy2-main.dir/midi_player.c.obj"
+	C:\VSARM\armcc\102021~1.10\bin\AR19DD~1.EXE $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/grumpy2-main.dir/midi_player.c.obj -MF CMakeFiles\grumpy2-main.dir\midi_player.c.obj.d -o CMakeFiles\grumpy2-main.dir\midi_player.c.obj -c M:\BFB\DC32\grumpy-badge\code\midi_player.c
 
-CMakeFiles/grumpy2-main.dir/midi_loader.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/grumpy2-main.dir/midi_loader.c.i"
-	C:\VSARM\armcc\102021~1.10\bin\AR19DD~1.EXE $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E M:\BFB\DC32\grumpy-badge\code\midi_loader.c > CMakeFiles\grumpy2-main.dir\midi_loader.c.i
+CMakeFiles/grumpy2-main.dir/midi_player.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/grumpy2-main.dir/midi_player.c.i"
+	C:\VSARM\armcc\102021~1.10\bin\AR19DD~1.EXE $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E M:\BFB\DC32\grumpy-badge\code\midi_player.c > CMakeFiles\grumpy2-main.dir\midi_player.c.i
 
-CMakeFiles/grumpy2-main.dir/midi_loader.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/grumpy2-main.dir/midi_loader.c.s"
-	C:\VSARM\armcc\102021~1.10\bin\AR19DD~1.EXE $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S M:\BFB\DC32\grumpy-badge\code\midi_loader.c -o CMakeFiles\grumpy2-main.dir\midi_loader.c.s
+CMakeFiles/grumpy2-main.dir/midi_player.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/grumpy2-main.dir/midi_player.c.s"
+	C:\VSARM\armcc\102021~1.10\bin\AR19DD~1.EXE $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S M:\BFB\DC32\grumpy-badge\code\midi_player.c -o CMakeFiles\grumpy2-main.dir\midi_player.c.s
 
 CMakeFiles/grumpy2-main.dir/midi_uart.c.obj: CMakeFiles/grumpy2-main.dir/flags.make
 CMakeFiles/grumpy2-main.dir/midi_uart.c.obj: M:/BFB/DC32/grumpy-badge/code/midi_uart.c
@@ -1323,7 +1323,7 @@ grumpy2__main_OBJECTS = \
 "CMakeFiles/grumpy2-main.dir/hw_config.c.obj" \
 "CMakeFiles/grumpy2-main.dir/midi_file_utils.c.obj" \
 "CMakeFiles/grumpy2-main.dir/midi_utils.c.obj" \
-"CMakeFiles/grumpy2-main.dir/midi_loader.c.obj" \
+"CMakeFiles/grumpy2-main.dir/midi_player.c.obj" \
 "CMakeFiles/grumpy2-main.dir/midi_uart.c.obj" \
 "CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_stdlib/stdlib.c.obj" \
 "CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.obj" \
@@ -1417,7 +1417,7 @@ grumpy2-main.elf: CMakeFiles/grumpy2-main.dir/main.c.obj
 grumpy2-main.elf: CMakeFiles/grumpy2-main.dir/hw_config.c.obj
 grumpy2-main.elf: CMakeFiles/grumpy2-main.dir/midi_file_utils.c.obj
 grumpy2-main.elf: CMakeFiles/grumpy2-main.dir/midi_utils.c.obj
-grumpy2-main.elf: CMakeFiles/grumpy2-main.dir/midi_loader.c.obj
+grumpy2-main.elf: CMakeFiles/grumpy2-main.dir/midi_player.c.obj
 grumpy2-main.elf: CMakeFiles/grumpy2-main.dir/midi_uart.c.obj
 grumpy2-main.elf: CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_stdlib/stdlib.c.obj
 grumpy2-main.elf: CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.obj
