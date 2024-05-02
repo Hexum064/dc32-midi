@@ -982,6 +982,30 @@ C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\grumpy2-main.dir\build.make CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.s
 .PHONY : C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.s
 
+C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_i2c/i2c.obj: C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_i2c/i2c.c.obj
+.PHONY : C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_i2c/i2c.obj
+
+# target to build an object file
+C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_i2c/i2c.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\grumpy2-main.dir\build.make CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_i2c/i2c.c.obj
+.PHONY : C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_i2c/i2c.c.obj
+
+C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_i2c/i2c.i: C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_i2c/i2c.c.i
+.PHONY : C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_i2c/i2c.i
+
+# target to preprocess a source file
+C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_i2c/i2c.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\grumpy2-main.dir\build.make CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_i2c/i2c.c.i
+.PHONY : C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_i2c/i2c.c.i
+
+C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_i2c/i2c.s: C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_i2c/i2c.c.s
+.PHONY : C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_i2c/i2c.s
+
+# target to generate assembly for a file
+C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_i2c/i2c.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\grumpy2-main.dir\build.make CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_i2c/i2c.c.s
+.PHONY : C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_i2c/i2c.c.s
+
 C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_irq/irq.obj: C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_irq/irq.c.obj
 .PHONY : C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_irq/irq.obj
 
@@ -2046,6 +2070,14 @@ FatFs_SPI/src/rtc.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\grumpy2-main.dir\build.make CMakeFiles/grumpy2-main.dir/FatFs_SPI/src/rtc.c.s
 .PHONY : FatFs_SPI/src/rtc.c.s
 
+data.obj: data.S.obj
+.PHONY : data.obj
+
+# target to build an object file
+data.S.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\grumpy2-main.dir\build.make CMakeFiles/grumpy2-main.dir/data.S.obj
+.PHONY : data.S.obj
+
 hw_config.obj: hw_config.c.obj
 .PHONY : hw_config.obj
 
@@ -2302,6 +2334,9 @@ help:
 	@echo ... C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_gpio/gpio.obj
 	@echo ... C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_gpio/gpio.i
 	@echo ... C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_gpio/gpio.s
+	@echo ... C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_i2c/i2c.obj
+	@echo ... C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_i2c/i2c.i
+	@echo ... C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_i2c/i2c.s
 	@echo ... C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_irq/irq.obj
 	@echo ... C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_irq/irq.i
 	@echo ... C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_irq/irq.s
@@ -2435,6 +2470,7 @@ help:
 	@echo ... FatFs_SPI/src/rtc.obj
 	@echo ... FatFs_SPI/src/rtc.i
 	@echo ... FatFs_SPI/src/rtc.s
+	@echo ... data.obj
 	@echo ... hw_config.obj
 	@echo ... hw_config.i
 	@echo ... hw_config.s

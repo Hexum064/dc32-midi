@@ -190,3 +190,5 @@ CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_stand
  C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_standard_link/crt0.S \
  generated/pico_base/pico/config_autogen.h \
  generated/pico_base/pico/version.h
+CMakeFiles/grumpy2-main.dir/data.S.obj: \
+ M:/BFB/DC32/grumpy-badge/code/data.S

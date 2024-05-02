@@ -26,13 +26,15 @@ add_executable(grumpy2-main
     midi_file_utils.c
     midi_utils.c
     midi_player.c
-    midi_uart.c    
+    midi_uart.c   
+    data.S 
 )
 
 # Add the standard library and FatFS/SPI to the build
 target_link_libraries(grumpy2-main 
     pico_stdlib
     FatFs_SPI
+    hardware_i2c
 )
 
 pico_set_program_name(grumpy2-main "grumpy2-main")

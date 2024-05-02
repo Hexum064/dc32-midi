@@ -182,6 +182,8 @@ C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_standard_link/hardware/regs/sio.h
 pico/binary_info/defs.h
 C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_standard_link/pico/binary_info/defs.h
 
+M:/BFB/DC32/grumpy-badge/code/data.S
+
 generated/pico_base/pico/config_autogen.h
 C:/VSARM/sdk/pico/pico-sdk/src/boards/include/boards/pico.h
 -

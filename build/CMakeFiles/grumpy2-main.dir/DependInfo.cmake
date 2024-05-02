@@ -19,6 +19,7 @@ set(CMAKE_DEPENDS_CHECK_ASM
   "C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_int64_ops/pico_int64_ops_aeabi.S" "M:/BFB/DC32/grumpy-badge/code/build/CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_int64_ops/pico_int64_ops_aeabi.S.obj"
   "C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_mem_ops/mem_ops_aeabi.S" "M:/BFB/DC32/grumpy-badge/code/build/CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_mem_ops/mem_ops_aeabi.S.obj"
   "C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_standard_link/crt0.S" "M:/BFB/DC32/grumpy-badge/code/build/CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_standard_link/crt0.S.obj"
+  "M:/BFB/DC32/grumpy-badge/code/data.S" "M:/BFB/DC32/grumpy-badge/code/build/CMakeFiles/grumpy2-main.dir/data.S.obj"
   )
 set(CMAKE_ASM_COMPILER_ID "GNU")
 
@@ -123,6 +124,7 @@ set(CMAKE_ASM_TARGET_INCLUDE_PATH
   "C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_spi/include"
   "C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_dma/include"
   "C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_rtc/include"
+  "C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_i2c/include"
   )
 
 # The set of dependency files which are needed:
@@ -159,6 +161,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_dma/dma.c" "CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_dma/dma.c.obj" "gcc" "CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_dma/dma.c.obj.d"
   "C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_flash/flash.c" "CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_flash/flash.c.obj" "gcc" "CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_flash/flash.c.obj.d"
   "C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_gpio/gpio.c" "CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.obj" "gcc" "CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_gpio/gpio.c.obj.d"
+  "C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_i2c/i2c.c" "CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_i2c/i2c.c.obj" "gcc" "CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_i2c/i2c.c.obj.d"
   "C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_irq/irq.c" "CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_irq/irq.c.obj" "gcc" "CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_irq/irq.c.obj.d"
   "C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_pll/pll.c" "CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_pll/pll.c.obj" "gcc" "CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_pll/pll.c.obj.d"
   "C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_rtc/rtc.c" "CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_rtc/rtc.c.obj" "gcc" "CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_rtc/rtc.c.obj.d"
