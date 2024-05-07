@@ -3,6 +3,7 @@
 #include "f_util.h"
 #include "ff.h"
 #include "pico/stdlib.h"
+#include "pico/multicore.h"
 
 #include "rtc.h"
 
@@ -37,6 +38,7 @@ uint32_t _ticks = 0;
 uint32_t _next_tick = 0;
 
 uint16_t sample_len = 0;
+uint16_t orig_len = 0;
 uint16_t sample_start = 0;
 uint16_t sample_offset = 0;
 
@@ -48,6 +50,7 @@ uint8_t id;
 uint8_t samples;
 uint8_t * orig_sample;
 uint8_t * pitched_sample;
+bool playing_sample = false;
 
 #define US_FOR_11K 91
 
@@ -65,16 +68,16 @@ float InterpolateHermite4pt3oX(uint8_t* x, float t)
 // `rate` is the speedup/slowdown factor. 
 // result mixed into `outwave`
 // "Sample" is a typedef for the raw audio type.
-void ScratchMix(uint8_t * outwave, uint8_t * inwave, float rate, uint16_t inputLen)
+void ScratchMix(uint8_t * outwave, uint8_t * inwave, float rate, uint32_t offset, uint16_t inputLen)
 {
    float index = 0;
    while (index < inputLen)
    {
       int i = (int)index;          
       float frac = index-i;      //will be between 0 and 1
-      uint8_t s1 = inwave[i];
-      uint8_t s2 = inwave[i+1];
-      *outwave++ = InterpolateHermite4pt3oX(inwave+i-1,frac);
+    //   uint8_t s1 = inwave[i + offset];
+    //   uint8_t s2 = inwave[i+1 + offset];
+      *outwave++ = InterpolateHermite4pt3oX(inwave+((i-1) + offset),frac);
       index+=rate;
    }
 }
@@ -125,11 +128,15 @@ static void alarm_2_irq(void) {
     //Send I2C: try i2c_write_byte_raw next
     
     sample_offset++;
+    playing_sample = sample_offset < sample_len;
     
-    
-    if (sample_offset < sample_len)
+    if (playing_sample)
     {
         alarm_2_in_us(US_FOR_11K);
+    }
+    else 
+    {
+        printf("Finished with sample in core (%d)\n", get_core_num());
     }
 }
 
@@ -166,6 +173,78 @@ void dac_io_init()
     gpio_set_drive_strength(14, GPIO_DRIVE_STRENGTH_8MA );
     gpio_set_drive_strength(15, GPIO_DRIVE_STRENGTH_8MA );
     
+}
+
+
+void load_channel(uint8_t channel, uint8_t patch)
+{
+    //Offset is the start of the key data. Key data starts after the patch count and offsets for each patch
+    uint16_t index = (patch * 2) + 1;
+    uint16_t offset = (uint16_t)map_start[index] + (uint16_t)(map_start[index + 1] << 8);
+    printf("Index 0x%04x, Data: 0x%04x\n", index, offset);
+    offset += (map_start[0] * 2) + 2; //2 instead of one to skip the patch id too
+    uint8_t cnt = map_start[offset++];
+    printf("count: %d, offset: 0x%04x\n", cnt, offset);
+    for (uint8_t i = 0; i < cnt; i++)
+    {
+        channels[channel].key_count = cnt;
+        channels[channel].keys[i].key_offset = offset;
+        channels[channel].keys[i].low_key = map_start[offset++];
+        channels[channel].keys[i].high_key = map_start[offset];
+        offset += 18;
+    }
+}
+
+u_int8_t find_key(u_int8_t channel, u_int8_t key)
+{
+    
+    for (uint8_t i = 0; i < channels[channel].key_count; i++)
+    {
+        if (key >= channels[channel].keys[i].key_offset && key <= channels[channel].keys[i].key_offset)
+        {
+            return i;
+        }
+    };
+    return 0;
+}
+
+//TODO: How do I index the voices
+void load_sample(uint8_t channel, uint8_t key, uint8_t velocity)
+{
+    key_info key = channels[channel].keys[find_key(channel, key)];
+    voice_info voice;
+
+}
+
+void main2()
+{
+    printf("Entering core 1 (%d)\n", get_core_num());
+    printf("playing samples\n");
+
+    sample_start = (map_start[0x106] + (map_start[0x107] << 8) + (map_start[0x108] << 16) + (map_start[0x109] << 24));
+    // sample_offset = sample_start;
+    
+    orig_len = (map_start[0x10A] + (map_start[0x10B] << 8));
+    
+    pitched_sample = (uint8_t *)malloc(1);
+    float rate;
+    for (uint8_t i = 48; i < 73; i++)
+    {
+        playing_sample = true;
+
+        sample_offset = 0;
+        rate = pitches[i];
+        sample_len = orig_len / rate;
+        pitched_sample = (uint8_t *)realloc(pitched_sample, sample_len);
+        ScratchMix(pitched_sample, samples_start, rate, sample_start, orig_len );
+
+        printf("playing at rate %f (note %d)\n", rate, i);
+        alarm_2_in_us(US_FOR_11K);
+        
+        while(playing_sample){}
+    }
+
+
 }
 
 
@@ -262,74 +341,46 @@ uint8_t  sine_wave[256] = {
 
     // }
 
-    
-    printf("---Patches: %d---\n", map_start[0]);
+    multicore_launch_core1(main2);
 
-    for (uint8_t i = 0; i < map_start[0]; i++)
-    {
-        id = map_start[offset++];
-        samples = map_start[offset++];
-        printf("Patch %d, samples: %d.\n", id, samples);      
+    // printf("---Patches: %d---\n", map_start[0]);
+    // offset = 2 * map_start[0] + 1;
+    // for (uint8_t i = 0; i < map_start[0]; i++)
+    // {
+    //     id = map_start[offset++];
+    //     samples = map_start[offset++];
+    //     printf("Patch %d, samples: %d.\n", id, samples);      
             
-            for (uint8_t j = 0; j < samples; j++)
-            {
-                printf("\tkeys: %d - %d. Root: %d. offset: 0x%08x. length: %u\n", map_start[offset+0], map_start[offset+1], map_start[offset+2], 
-                (map_start[offset+3] + (map_start[offset+4] << 8) + (map_start[offset+5] << 16) + (map_start[offset+6] << 24)),
-                (map_start[offset+7] + (map_start[offset+8] << 8)));
-                offset += 17;
-                printf("\t\tnext offset: 0x%08x\n", offset);
-            }
+    //         for (uint8_t j = 0; j < samples; j++)
+    //         {
+    //             printf("\tkeys: %d - %d. Root: %d. offset: 0x%08x. length: %u\n", map_start[offset+0], map_start[offset+1], map_start[offset+2], 
+    //             (map_start[offset+3] + (map_start[offset+4] << 8) + (map_start[offset+5] << 16) + (map_start[offset+6] << 24)),
+    //             (map_start[offset+7] + (map_start[offset+8] << 8)));
+    //             offset += 19;
+    //             printf("\t\tnext offset: 0x%08x\n", offset);
+    //         }
 
-    }
-
-    printf("playing sample 0\n");
+    // }
 
 
-    
+    load_channel(0, 110);
 
+    printf("---Channel %d -> patch %d---\n", 0, 1);
+    printf("\tkey count: %d\n", channels[0].key_count);
 
-    sample_start = (map_start[0x6] + (map_start[0x7] << 8) + (map_start[0x8] << 16) + (map_start[0x9] << 24));
-    // sample_offset = sample_start;
-    sample_offset = 0;
-    sample_len = (map_start[0x0A] + (map_start[0x0B] << 8));
-
-    orig_sample = (uint8_t *)malloc(sample_len);
-    pitched_sample = (uint8_t *)malloc(sample_len);
-
-
-    for (uint16_t i = 0; i < sample_len; i++)
+    for (uint8_t i = 0; i < channels[0].key_count; i++)
     {
-        orig_sample[i] = samples_start[sample_start + i];
-        pitched_sample[i] = samples_start[sample_start + i];
+        printf("\t\tkey %d: high key: %d, offset: 0x%04x\n", i, channels[0].keys[i].high_key, channels[0].keys[i].key_offset);
     }
 
-
-    // printf("Sample Start: 0x%08x, len: %u\n", sample_start, sample_len);
-    // uint8_t first[] = {0x00, 0x00};
-    // printf("I2C priming: %d\n", i2c_write_blocking(AUDIO_I2C, AUDIO_I2C_ADDR, i2c_data, 2, true ));
-    
-    printf("Playing original sample\n");
-    alarm_2_in_us(US_FOR_11K);
-
-    while(sample_offset < sample_len )
-    {}
-
-    printf("Pitching sound\n");
-
-float rate = 1.5;
-
-    ScratchMix(pitched_sample, orig_sample, rate, sample_len);
-    sample_offset = 0;
-    sample_len /= rate;
-    printf("Playing pitched sample\n");
-    alarm_2_in_us(US_FOR_11K);
-    while(sample_offset < sample_len )
-    {}
 
     printf("done\n");
      sleep_ms(2000);
     while(1)
-    {}
+    {
+        sleep_ms(500);
+        printf("sleeping in core %d\n", get_core_num());
+    }
      
 
     midi_init(&midi);

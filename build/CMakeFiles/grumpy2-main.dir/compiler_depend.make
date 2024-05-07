@@ -2295,9 +2295,17 @@ CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_mallo
   C:/VSARM/sdk/pico/pico-sdk/src/common/pico_base/include/pico/config.h \
   C:/VSARM/sdk/pico/pico-sdk/src/common/pico_base/include/pico/error.h \
   C:/VSARM/sdk/pico/pico-sdk/src/common/pico_base/include/pico/types.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/common/pico_sync/include/pico/lock_core.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/common/pico_sync/include/pico/mutex.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/common/pico_time/include/pico/time.h \
   C:/VSARM/sdk/pico/pico-sdk/src/rp2040/hardware_regs/include/hardware/platform_defs.h \
   C:/VSARM/sdk/pico/pico-sdk/src/rp2040/hardware_regs/include/hardware/regs/addressmap.h \
   C:/VSARM/sdk/pico/pico-sdk/src/rp2040/hardware_regs/include/hardware/regs/sio.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/rp2040/hardware_regs/include/hardware/regs/timer.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/rp2040/hardware_structs/include/hardware/structs/timer.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_base/include/hardware/address_mapped.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_sync/include/hardware/sync.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_timer/include/hardware/timer.h \
   C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_malloc/include/pico/malloc.h \
   C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_platform/include/pico/platform.h \
   generated/pico_base/pico/config_autogen.h \
@@ -2321,6 +2329,56 @@ CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_mallo
   C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/features.h \
   C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/lock.h \
   C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/reent.h \
+  C:/VSARM/armcc/10\ 2021.10/lib/gcc/arm-none-eabi/10.3.1/include/stdbool.h \
+  C:/VSARM/armcc/10\ 2021.10/lib/gcc/arm-none-eabi/10.3.1/include/stddef.h \
+  C:/VSARM/armcc/10\ 2021.10/lib/gcc/arm-none-eabi/10.3.1/include/stdint.h
+
+CMakeFiles/grumpy2-main.dir/C_/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_multicore/multicore.c.obj: C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_multicore/multicore.c \
+  C:/VSARM/sdk/pico/pico-sdk/src/boards/include/boards/pico.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/cmsis/include/cmsis/rename_exceptions.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/common/pico_base/include/pico.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/common/pico_base/include/pico/assert.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/common/pico_base/include/pico/config.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/common/pico_base/include/pico/error.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/common/pico_base/include/pico/types.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/common/pico_sync/include/pico/critical_section.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/common/pico_sync/include/pico/lock_core.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/common/pico_sync/include/pico/mutex.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/common/pico_sync/include/pico/sem.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/common/pico_sync/include/pico/sync.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/common/pico_time/include/pico/time.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/rp2040/hardware_regs/include/hardware/platform_defs.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/rp2040/hardware_regs/include/hardware/regs/addressmap.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/rp2040/hardware_regs/include/hardware/regs/intctrl.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/rp2040/hardware_regs/include/hardware/regs/m0plus.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/rp2040/hardware_regs/include/hardware/regs/psm.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/rp2040/hardware_regs/include/hardware/regs/sio.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/rp2040/hardware_regs/include/hardware/regs/timer.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/rp2040/hardware_structs/include/hardware/structs/interp.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/rp2040/hardware_structs/include/hardware/structs/scb.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/rp2040/hardware_structs/include/hardware/structs/sio.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/rp2040/hardware_structs/include/hardware/structs/timer.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_base/include/hardware/address_mapped.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_claim/include/hardware/claim.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_irq/include/hardware/irq.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_sync/include/hardware/sync.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_timer/include/hardware/timer.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_multicore/include/pico/multicore.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_platform/include/pico/platform.h \
+  generated/pico_base/pico/config_autogen.h \
+  generated/pico_base/pico/version.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/_ansi.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/_newlib_version.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/assert.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/machine/_default_types.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/machine/ieeefp.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/newlib.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/stdint.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/_intsup.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/_stdint.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/cdefs.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/config.h \
+  C:/VSARM/armcc/10\ 2021.10/arm-none-eabi/include/sys/features.h \
   C:/VSARM/armcc/10\ 2021.10/lib/gcc/arm-none-eabi/10.3.1/include/stdbool.h \
   C:/VSARM/armcc/10\ 2021.10/lib/gcc/arm-none-eabi/10.3.1/include/stddef.h \
   C:/VSARM/armcc/10\ 2021.10/lib/gcc/arm-none-eabi/10.3.1/include/stdint.h
@@ -3694,6 +3752,11 @@ CMakeFiles/grumpy2-main.dir/main.c.obj: M:/BFB/DC32/grumpy-badge/code/main.c \
   C:/VSARM/sdk/pico/pico-sdk/src/common/pico_base/include/pico/error.h \
   C:/VSARM/sdk/pico/pico-sdk/src/common/pico_base/include/pico/types.h \
   C:/VSARM/sdk/pico/pico-sdk/src/common/pico_stdlib/include/pico/stdlib.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/common/pico_sync/include/pico/critical_section.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/common/pico_sync/include/pico/lock_core.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/common/pico_sync/include/pico/mutex.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/common/pico_sync/include/pico/sem.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/common/pico_sync/include/pico/sync.h \
   C:/VSARM/sdk/pico/pico-sdk/src/common/pico_time/include/pico/time.h \
   C:/VSARM/sdk/pico/pico-sdk/src/rp2040/hardware_regs/include/hardware/platform_defs.h \
   C:/VSARM/sdk/pico/pico-sdk/src/rp2040/hardware_regs/include/hardware/regs/addressmap.h \
@@ -3714,8 +3777,10 @@ CMakeFiles/grumpy2-main.dir/main.c.obj: M:/BFB/DC32/grumpy-badge/code/main.c \
   C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_base/include/hardware/address_mapped.h \
   C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_gpio/include/hardware/gpio.h \
   C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_irq/include/hardware/irq.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_sync/include/hardware/sync.h \
   C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_timer/include/hardware/timer.h \
   C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_uart/include/hardware/uart.h \
+  C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_multicore/include/pico/multicore.h \
   C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_platform/include/pico/platform.h \
   C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_stdio/include/pico/stdio.h \
   C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_stdio_usb/include/pico/stdio_usb.h \
@@ -4426,6 +4491,8 @@ C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_platform/platform.c:
 
 C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_flash/include/hardware/flash.h:
 
+C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_multicore/include/pico/multicore.h:
+
 C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_bootrom/include/pico/bootrom.h:
 
 C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/hardware_gpio/gpio.c:
@@ -4493,6 +4560,8 @@ C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_float/float_init_rom.c:
 C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_float/include/pico/float.h:
 
 C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_malloc/include/pico/malloc.h:
+
+C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_multicore/multicore.c:
 
 C:/VSARM/sdk/pico/pico-sdk/src/rp2_common/pico_printf/printf.c:
 

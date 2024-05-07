@@ -73,6 +73,13 @@ CMakeFiles/grumpy2-main.dir/main.c.obj: \
  C:\VSARM\sdk\pico\pico-sdk\src\rp2040\hardware_regs\include/hardware/regs/uart.h \
  C:\VSARM\sdk\pico\pico-sdk\src\rp2040\hardware_regs\include/hardware/regs/dreq.h \
  C:\VSARM\sdk\pico\pico-sdk\src\rp2_common\pico_stdio_usb\include/pico/stdio_usb.h \
+ C:\VSARM\sdk\pico\pico-sdk\src\rp2_common\pico_multicore\include/pico/multicore.h \
+ C:\VSARM\sdk\pico\pico-sdk\src\common\pico_sync\include/pico/sync.h \
+ C:\VSARM\sdk\pico\pico-sdk\src\common\pico_sync\include/pico/sem.h \
+ C:\VSARM\sdk\pico\pico-sdk\src\common\pico_sync\include/pico/lock_core.h \
+ C:\VSARM\sdk\pico\pico-sdk\src\rp2_common\hardware_sync\include/hardware/sync.h \
+ C:\VSARM\sdk\pico\pico-sdk\src\common\pico_sync\include/pico/mutex.h \
+ C:\VSARM\sdk\pico\pico-sdk\src\common\pico_sync\include/pico/critical_section.h \
  M:\BFB\DC32\grumpy-badge\code\FatFs_SPI\include/rtc.h \
  c:\vsarm\armcc\102021~1.10\arm-none-eabi\include\string.h \
  c:\vsarm\armcc\102021~1.10\arm-none-eabi\include\sys\_locale.h \

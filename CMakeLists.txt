@@ -35,6 +35,7 @@ target_link_libraries(grumpy2-main
     pico_stdlib
     FatFs_SPI
     hardware_i2c
+    pico_multicore
 )
 
 pico_set_program_name(grumpy2-main "grumpy2-main")
