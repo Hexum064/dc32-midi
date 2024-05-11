@@ -12,7 +12,7 @@
 #define VOICE_COUNT 24
 #define KEY_COUNT 10
 #define CHANNEL_COUNT 16
-
+#define TUNING 1000
 static uint8_t  sine_wave[256] = {
   0x80, 0x83, 0x86, 0x89, 0x8C, 0x90, 0x93, 0x96,
   0x99, 0x9C, 0x9F, 0xA2, 0xA5, 0xA8, 0xAB, 0xAE,
@@ -54,31 +54,19 @@ static uint8_t offset_steps[] =
 };
 
 static uint16_t twelfths[] = {
-//     16384, 
-// 17358,
-// 18390,
-// 19484,
-// 20643,
-// 21870,
-// 23170,
-// 24548,
-// 26008,
-// 27554,
-// 29193,
-// 30929
-30929,
-29193,
-27554,
-26008,
-24548,
-23170,
-21870,
-20643,
-19484,
-18390,
-17358,
-16384
 
+30929 + TUNING,
+29193 + TUNING,
+27554 + TUNING,
+26008 + TUNING,
+24548 + TUNING,
+23170 + TUNING,
+21870 + TUNING,
+20643 + TUNING,
+19484 + TUNING,
+18390 + TUNING,
+17358 + TUNING,
+16384 + TUNING
 
 };
 
@@ -116,6 +104,7 @@ typedef struct voice_s
     uint16_t offset_step; //Calculated in 12ths
     uint16_t offset_step_cnt;
     uint32_t offset;
+    bool active;
     
 } voice_info;
 
